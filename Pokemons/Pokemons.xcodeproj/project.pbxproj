@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,16 @@
 		8FB843CA26B0303D00991EE6 /* ContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843C926B0303D00991EE6 /* ContextBuilder.swift */; };
 		8FB843CD26B0309500991EE6 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843CC26B0309500991EE6 /* AppCoordinator.swift */; };
 		8FB843D026B0326B00991EE6 /* SingleNavigationControllerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843CF26B0326B00991EE6 /* SingleNavigationControllerType.swift */; };
+		8FB843D226B0344300991EE6 /* PokemonDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843D126B0344300991EE6 /* PokemonDetailsViewController.swift */; };
+		8FB843D626B0354900991EE6 /* PokemonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843D526B0354900991EE6 /* PokemonCollectionViewCell.swift */; };
+		8FB843D926B0365300991EE6 /* Reusable in Frameworks */ = {isa = PBXBuildFile; productRef = 8FB843D826B0365300991EE6 /* Reusable */; };
+		8FB843DC26B0391600991EE6 /* TinyConstraints in Frameworks */ = {isa = PBXBuildFile; productRef = 8FB843DB26B0391600991EE6 /* TinyConstraints */; };
+		8FB843DE26B0393F00991EE6 /* PokemonListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843DD26B0393F00991EE6 /* PokemonListPresenter.swift */; };
+		8FB843E026B0740200991EE6 /* PokemonListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843DF26B0740200991EE6 /* PokemonListCoordinator.swift */; };
+		8FB843E226B0762F00991EE6 /* CoordinatorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843E126B0762F00991EE6 /* CoordinatorFactory.swift */; };
+		8FB843E426B0886400991EE6 /* PokemonPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843E326B0886400991EE6 /* PokemonPreview.swift */; };
+		8FB843E626B092CD00991EE6 /* FavoriteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843E526B092CD00991EE6 /* FavoriteButton.swift */; };
+		8FB843E926B09E6500991EE6 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8FB843E826B09E6500991EE6 /* Kingfisher */; };
 		8FD009F026AEB93F005BD1DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD009EF26AEB93F005BD1DD /* AppDelegate.swift */; };
 		8FD009F926AEB940005BD1DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8FD009F826AEB940005BD1DD /* Assets.xcassets */; };
 		8FD009FC26AEB940005BD1DD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8FD009FA26AEB940005BD1DD /* LaunchScreen.storyboard */; };
@@ -33,6 +43,13 @@
 		8FB843C926B0303D00991EE6 /* ContextBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextBuilder.swift; sourceTree = "<group>"; };
 		8FB843CC26B0309500991EE6 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		8FB843CF26B0326B00991EE6 /* SingleNavigationControllerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleNavigationControllerType.swift; sourceTree = "<group>"; };
+		8FB843D126B0344300991EE6 /* PokemonDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonDetailsViewController.swift; sourceTree = "<group>"; };
+		8FB843D526B0354900991EE6 /* PokemonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonCollectionViewCell.swift; sourceTree = "<group>"; };
+		8FB843DD26B0393F00991EE6 /* PokemonListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListPresenter.swift; sourceTree = "<group>"; };
+		8FB843DF26B0740200991EE6 /* PokemonListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListCoordinator.swift; sourceTree = "<group>"; };
+		8FB843E126B0762F00991EE6 /* CoordinatorFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorFactory.swift; sourceTree = "<group>"; };
+		8FB843E326B0886400991EE6 /* PokemonPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonPreview.swift; sourceTree = "<group>"; };
+		8FB843E526B092CD00991EE6 /* FavoriteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteButton.swift; sourceTree = "<group>"; };
 		8FD009EC26AEB93F005BD1DD /* Pokemons.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pokemons.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FD009EF26AEB93F005BD1DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8FD009F826AEB940005BD1DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -45,6 +62,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FB843E926B09E6500991EE6 /* Kingfisher in Frameworks */,
+				8FB843D926B0365300991EE6 /* Reusable in Frameworks */,
+				8FB843DC26B0391600991EE6 /* TinyConstraints in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				8FB843AE26B0242200991EE6 /* Pokemon.swift */,
+				8FB843E326B0886400991EE6 /* PokemonPreview.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -71,7 +92,9 @@
 		8FB843B126B0257B00991EE6 /* PokemonList */ = {
 			isa = PBXGroup;
 			children = (
+				8FB843DF26B0740200991EE6 /* PokemonListCoordinator.swift */,
 				8FB843C326B02D1800991EE6 /* PokemonListViewController.swift */,
+				8FB843DD26B0393F00991EE6 /* PokemonListPresenter.swift */,
 			);
 			path = PokemonList;
 			sourceTree = "<group>";
@@ -79,6 +102,7 @@
 		8FB843B226B0258600991EE6 /* PokemonDetails */ = {
 			isa = PBXGroup;
 			children = (
+				8FB843D126B0344300991EE6 /* PokemonDetailsViewController.swift */,
 			);
 			path = PokemonDetails;
 			sourceTree = "<group>";
@@ -142,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				8FB843CC26B0309500991EE6 /* AppCoordinator.swift */,
+				8FB843E126B0762F00991EE6 /* CoordinatorFactory.swift */,
 			);
 			name = Coordinators;
 			sourceTree = "<group>";
@@ -152,6 +177,15 @@
 				8FB843CF26B0326B00991EE6 /* SingleNavigationControllerType.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		8FB843D326B034EE00991EE6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8FB843E526B092CD00991EE6 /* FavoriteButton.swift */,
+				8FB843D526B0354900991EE6 /* PokemonCollectionViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		8FD009E326AEB93F005BD1DD = {
@@ -180,6 +214,7 @@
 				8FB843C526B02F7400991EE6 /* Root */,
 				8FB843BD26B02B2400991EE6 /* Services */,
 				8FB843B926B0262A00991EE6 /* Utils */,
+				8FB843D326B034EE00991EE6 /* Views */,
 			);
 			path = Pokemons;
 			sourceTree = "<group>";
@@ -200,6 +235,11 @@
 			dependencies = (
 			);
 			name = Pokemons;
+			packageProductDependencies = (
+				8FB843D826B0365300991EE6 /* Reusable */,
+				8FB843DB26B0391600991EE6 /* TinyConstraints */,
+				8FB843E826B09E6500991EE6 /* Kingfisher */,
+			);
 			productName = Pokemons;
 			productReference = 8FD009EC26AEB93F005BD1DD /* Pokemons.app */;
 			productType = "com.apple.product-type.application";
@@ -227,6 +267,11 @@
 				Base,
 			);
 			mainGroup = 8FD009E326AEB93F005BD1DD;
+			packageReferences = (
+				8FB843D726B0365300991EE6 /* XCRemoteSwiftPackageReference "Reusable" */,
+				8FB843DA26B0391600991EE6 /* XCRemoteSwiftPackageReference "TinyConstraints" */,
+				8FB843E726B09E6500991EE6 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
 			productRefGroup = 8FD009ED26AEB93F005BD1DD /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -256,13 +301,20 @@
 			files = (
 				8FB843C226B02B4900991EE6 /* FavoritesService.swift in Sources */,
 				8FB843C726B02FF400991EE6 /* CommonContext.swift in Sources */,
+				8FB843D226B0344300991EE6 /* PokemonDetailsViewController.swift in Sources */,
 				8FB843C026B02B4100991EE6 /* FavoritesServiceType.swift in Sources */,
 				8FB843CA26B0303D00991EE6 /* ContextBuilder.swift in Sources */,
 				8FB843AF26B0242200991EE6 /* Pokemon.swift in Sources */,
 				8FB843D026B0326B00991EE6 /* SingleNavigationControllerType.swift in Sources */,
+				8FB843DE26B0393F00991EE6 /* PokemonListPresenter.swift in Sources */,
 				8FD009F026AEB93F005BD1DD /* AppDelegate.swift in Sources */,
+				8FB843E226B0762F00991EE6 /* CoordinatorFactory.swift in Sources */,
+				8FB843E426B0886400991EE6 /* PokemonPreview.swift in Sources */,
 				8FB843CD26B0309500991EE6 /* AppCoordinator.swift in Sources */,
+				8FB843E026B0740200991EE6 /* PokemonListCoordinator.swift in Sources */,
+				8FB843E626B092CD00991EE6 /* FavoriteButton.swift in Sources */,
 				8FB843C426B02D1800991EE6 /* PokemonListViewController.swift in Sources */,
+				8FB843D626B0354900991EE6 /* PokemonCollectionViewCell.swift in Sources */,
 				8FB843BB26B0263700991EE6 /* Assets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,6 +519,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8FB843D726B0365300991EE6 /* XCRemoteSwiftPackageReference "Reusable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AliSoftware/Reusable";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.1;
+			};
+		};
+		8FB843DA26B0391600991EE6 /* XCRemoteSwiftPackageReference "TinyConstraints" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/roberthein/TinyConstraints";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.1;
+			};
+		};
+		8FB843E726B09E6500991EE6 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8FB843D826B0365300991EE6 /* Reusable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FB843D726B0365300991EE6 /* XCRemoteSwiftPackageReference "Reusable" */;
+			productName = Reusable;
+		};
+		8FB843DB26B0391600991EE6 /* TinyConstraints */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FB843DA26B0391600991EE6 /* XCRemoteSwiftPackageReference "TinyConstraints" */;
+			productName = TinyConstraints;
+		};
+		8FB843E826B09E6500991EE6 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FB843E726B09E6500991EE6 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8FD009E426AEB93F005BD1DD /* Project object */;
 }

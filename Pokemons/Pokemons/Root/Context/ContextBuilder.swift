@@ -8,7 +8,7 @@
 import Foundation
 
 enum ContextBuilder {
-    func buildContext() -> CommonContext {
+    static func buildContext() -> CommonContext {
         CommonContext(favoritesService: FavoritesService())
     }
 }

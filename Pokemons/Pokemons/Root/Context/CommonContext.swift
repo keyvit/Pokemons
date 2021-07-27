@@ -14,3 +14,11 @@ final class CommonContext {
         self.favoritesService = favoritesService
     }
 }
+
+// MARK: - CoordinatorFactory
+
+extension CommonContext: CoordinatorFactory {
+    func makePokemonListCoordinator() -> PokemonListCoordinator {
+        PokemonListCoordinator()
+    }
+}

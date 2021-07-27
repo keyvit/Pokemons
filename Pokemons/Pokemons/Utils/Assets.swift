@@ -10,10 +10,28 @@ import UIKit
 /// To be generated automatically using i.e. SwiftGen in case project gets bigger.
 
 struct ImageAsset {
-    fileprivate let name: String
+    private let name: String
+    
+    fileprivate enum ImageAssetType {
+        case system(UIImage.Configuration?)
+        case custom
+    }
+    private let type: ImageAssetType
+    
+    fileprivate init(name: String, type: ImageAssetType = .custom) {
+        self.name = name
+        self.type = type
+    }
     
     var image: UIImage {
-        if let image = UIImage(named: name) {
+        let image: UIImage?
+        switch type {
+        case .custom:
+            image = UIImage(named: name)
+        case let .system(config):
+            image = UIImage(systemName: name, withConfiguration: config)
+        }
+        if let image = image {
             return image
         } else {
             fatalError(#"Unable to load image "\#(name)"#)
@@ -23,16 +41,19 @@ struct ImageAsset {
 
 enum Asset {
     static let pokeball = ImageAsset(name: "pokeball")
+    static func like(configuration: UIImage.Configuration?) -> ImageAsset {
+        ImageAsset(name: "suit.heart.fill", type: .system(configuration))
+    }
 }
 
 enum L10n {
     private static let defaultTable = "Localizable"
     
+    enum FavoriteButton {
+        static let like = L10n.tr(defaultTable, "favorite_button.like")
+        static let dislike = L10n.tr(defaultTable, "favorite_button.dislike")
+    }
     enum PokemonList {
-        enum Button {
-            static let like = L10n.tr(defaultTable, "pokemon_list.button.like")
-            static let dislike = L10n.tr(defaultTable, "pokemon_list.button.dislike")
-        }
         enum Section {
             static let all = L10n.tr(defaultTable, "pokemon_list.section.all")
             static let favorite = L10n.tr(defaultTable, "pokemon_list.section.favorite")

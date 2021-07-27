@@ -9,13 +9,15 @@ import UIKit
 
 final class AppCoordinator {
     private let navigation: SingleNavigationControllerType
+    private lazy var context: CommonContext = ContextBuilder.buildContext()
     
     init(navigation: SingleNavigationControllerType) {
         self.navigation = navigation
     }
     
     func run() {
-        let viewController = PokemonListViewController()
-        navigation.put(viewController)
+        let coordinator = context.makePokemonListCoordinator()
+        let navigationController = UINavigationController(rootViewController: coordinator.makeInitial())
+        navigation.put(navigationController)
     }
 }
