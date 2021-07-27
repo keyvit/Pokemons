@@ -1,0 +1,11 @@
+"pokemon_list.button.like" = "Like";
+"pokemon_list.button.dislike" = "Disike";
+"pokemon_list.section.all" = "All";
+"pokemon_list.section.favorite" = "Favorite";
+"pokemon_details.name" = "Name";
+"pokemon_details.height" = "Height";
+"pokemon_details.weight" = "Weight";
+"pokemon_details.order" = "Order";
+"pokemon_details.base_experience" = "Base experience";
+"pokemon_details.types" = "Types";
+"pokemon_details.abilities" = "Abilities";
