@@ -13,6 +13,15 @@ enum PokemonList {
     enum SectionType: Hashable {
         case favorite
         case all
+        
+        var title: String {
+            switch self {
+            case .all:
+                return L10n.PokemonList.Section.all
+            case .favorite:
+                return L10n.PokemonList.Section.favorite
+            }
+        }
     }
 
     struct Section {        

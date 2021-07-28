@@ -64,6 +64,10 @@ private extension PokemonListViewController {
         collectionView.dataSource = dataSource
         collectionView.delegate = self
         collectionView.register(cellType: PokemonCollectionViewCell.self)
+        collectionView.register(
+            supplementaryViewType: LabelSectionHeaderView.self,
+            ofKind: UICollectionView.elementKindSectionHeader
+        )
         
         view.addSubview(collectionView)
         collectionView.edgesToSuperview(excluding: .top)
@@ -71,7 +75,7 @@ private extension PokemonListViewController {
     }
     
     func makeDataSource() -> DataSource {
-        UICollectionViewDiffableDataSource(
+        let dataSource = DataSource(
             collectionView: collectionView
         ) { [weak presenter] collectionView, indexPath, pokemonPreview in
             let cell = collectionView.dequeueReusableCell(for: indexPath) as PokemonCollectionViewCell
@@ -80,6 +84,23 @@ private extension PokemonListViewController {
             
             return cell
         }
+        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
+            guard let self = self, kind == UICollectionView.elementKindSectionHeader else {
+                return nil
+            }
+            
+            let view = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                for: indexPath,
+                viewType: LabelSectionHeaderView.self
+            )
+            let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+            view.setTitle(section.title)
+            
+            return view
+        }
+        
+        return dataSource
     }
     
     func makeCollectionViewLayout() -> UICollectionViewLayout {
@@ -102,7 +123,19 @@ private extension PokemonListViewController {
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = spacing
-        section.contentInsets = .init(top: spacing, leading: spacing, bottom: spacing, trailing: spacing)
+        section.contentInsets = .init(top: 4, leading: spacing, bottom: spacing, trailing: spacing)
+        
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(32)
+        )
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: headerSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
         
         return UICollectionViewCompositionalLayout(section: section)
     }
