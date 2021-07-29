@@ -9,83 +9,141 @@ import Foundation
 import PokemonsAPI
 
 final class PokemonService {
-    private(set) var pokemons: [Pokemon] = []
+    private(set) var favoritePokemons: [Pokemon]?
+    private(set) var nonFavoritePokemons: [Pokemon] = []
+    var allPokemons: [Pokemon] {
+        favoritePokemons ?? [] + nonFavoritePokemons
+    }
     
+    var areAllPokemonsDownloaded: Bool {
+        allPossiblePokemonCount == nonFavoritePokemons.count + (favoritePokemons?.count ?? 0)
+    }
+    
+    typealias Storage = StoresFavoritePokemonsNames
+    private let storage: Storage
     private let pokemonProvider: PokemonProviderType
     
-    // TODO: Save favorite pokemons locally
-    private var favoritePokemons: [Pokemon] = []
     private var allPossiblePokemonCount: Int?
     private let limit = AppConstants.defaultPokemonPageSize
     private var offset = 0
-    private var isPokemonPageDownloadInProgress = false
+    private var isPokemonBatchDownloadInProgress = false
     
-    private struct UnfinishedPokemonPageDownload {
-        let fetched: [Pokemon]
-        let failedToFetch: [String]
-    }
-    private var unfinishedDownload: UnfinishedPokemonPageDownload?
+    // Utilities for pokemon download optimization
+    private var favoritesFetcher: PokemonFetcher?
+    private var nonFavoritesFetcher: NonFavoritePokemonBatchFetcher?
     
-    init(pokemonProvider: PokemonProviderType) {
+    init(pokemonProvider: PokemonProviderType, storage: Storage) {
         self.pokemonProvider = pokemonProvider
+        self.storage = storage
     }
 }
 
 // MARK: - PokemonServiceType
 
 extension PokemonService: PokemonServiceType {
-    func loadNextPokemonBatchIfNotAlready(
-        completion: @escaping (Result<PokemonBatch, PokemonServiceError>) -> Void
-    ) {
-        guard !isPokemonPageDownloadInProgress else { return }
-        isPokemonPageDownloadInProgress = true
-        
-        let completion: (Result<PokemonBatch, PokemonServiceError>) -> Void = { [weak self] result in
-            self?.isPokemonPageDownloadInProgress = false
-            completion(result)
-        }
-        
-        let pokemonFetchCompletion: (FetchResult) -> Void = { [weak self] result in
+    func loadFavoritePokemons(completion: @escaping (Result<[Pokemon], PokemonServiceError>) -> Void) {
+        let completion: (Result<[Pokemon], NetworkError>) -> Void = { [weak self] result in
             guard let self = self else { return }
-            
-            var fetched = result.fetched.map { Pokemon(from: $0) }
-            self.unfinishedDownload.map { fetched.append(contentsOf: $0.fetched) }
-            
-            if result.failedToFetch.isEmpty {
-                self.offset += fetched.count
-                self.pokemons.append(contentsOf: fetched.sorted(by: { $0.order < $1.order }))
-                self.unfinishedDownload = nil
-                let isLoadFinished = fetched.count < self.limit
-                    || self.offset >= self.allPossiblePokemonCount ?? Int.max
-                completion(.success(PokemonBatch(pokemons: fetched, isLoadFinished: isLoadFinished)))
-            } else {
-                self.unfinishedDownload = UnfinishedPokemonPageDownload(
-                    fetched: fetched,
-                    failedToFetch: result.failedToFetch.keys.map { $0 }
-                )
-                result.failedToFetch.values.first.map {
-                    completion(.failure(Self.map(networkError: $0)))
-                }
+            if case let .success(pokemons) = result {
+                self.favoritesFetcher = nil
+                self.favoritePokemons = pokemons.sorted(by: self.arePokemonsInIncreasingOrder)
             }
+            completion(result.mapError(Self.map(networkError:)))
         }
         
-        if let unfinishedDownload = unfinishedDownload {
-            pokemonProvider.fetchPokemons(
-                names: unfinishedDownload.failedToFetch,
-                completion: pokemonFetchCompletion
-            )
+        if let fetcher = favoritesFetcher {
+            fetcher.fetch(completion: completion)
         } else {
-            pokemonProvider.fetchPokemonsPage(offset: offset) { [weak self] result in
-                switch result {
-                case let .success(response):
-                    self?.allPossiblePokemonCount = response.count
-                    let names = response.results.map { $0.name }
-                    self?.pokemonProvider.fetchPokemons(names: names, completion: pokemonFetchCompletion)
-                case let .failure(error):
-                    completion(.failure(Self.map(networkError: error)))
-                }
+            let names = storage.favoritePokemonsNames
+            if names.isEmpty {
+                completion(.success([]))
+            } else {
+                let fetcher = PokemonFetcher(pokemonProvider: pokemonProvider, namesToFetch: names)
+                favoritesFetcher = fetcher
+                fetcher.fetch(completion: completion)
             }
         }
+    }
+    
+    func loadNextPokemonBatchIfNotAlready(
+        completion: @escaping (Result<[Pokemon], PokemonServiceError>) -> Void
+    ) {
+        guard !isPokemonBatchDownloadInProgress else { return }
+        isPokemonBatchDownloadInProgress = true
+        
+        let completion: (Result<PokemonBatchFetchResult, NetworkError>) -> Void = { [weak self] result in
+            guard let self = self else { return }
+            self.isPokemonBatchDownloadInProgress = false
+            if case let .success(fetchResult) = result {
+                self.allPossiblePokemonCount = fetchResult.allPossiblePokemonCount
+                self.nonFavoritePokemons.append(
+                    contentsOf: fetchResult.pokemons.sorted(by: self.arePokemonsInIncreasingOrder)
+                )
+                self.offset = fetchResult.resultOffset
+                self.nonFavoritesFetcher = nil
+            }
+            let mapped = result
+                .map { $0.pokemons }
+                .mapError(Self.map(networkError:))
+            completion(mapped)
+        }
+        
+        if let fetcher = nonFavoritesFetcher {
+            fetcher.fetchNext(completion: completion)
+        } else {
+            let fetcher = NonFavoritePokemonBatchFetcher(
+                pokemonProvider: pokemonProvider,
+                initialOffset: offset,
+                limit: limit,
+                namesToIgnore: favoritePokemons.map { $0.map { $0.name } } ?? storage.favoritePokemonsNames
+            )
+            nonFavoritesFetcher = fetcher
+            fetcher.fetchNext(completion: completion)
+        }
+    }
+    
+    func addToFavoritesPokemonWithId(_ id: Int) {
+        guard let indexToRemove = nonFavoritePokemons.firstIndex(where: { $0.id == id }) else { return }
+        let pokemon = nonFavoritePokemons.remove(at: indexToRemove)
+        
+        let index = favoritePokemons?
+            .lastIndex(where: predicateForLastIndexToInsertPokemonAfter(pokemon: pokemon))
+            .map { favoritePokemons?.index(after: $0) }
+            ?? favoritePokemons?.startIndex
+        index.map { favoritePokemons?.insert(pokemon, at: $0) }
+        storage.saveFavoritePokemonName(pokemon.name)
+    }
+    
+    func removeFromFavoritesPokemonWithId(_ id: Int) {
+        guard let indexToRemove = favoritePokemons?.firstIndex(where: { $0.id == id }),
+              let pokemon = favoritePokemons?.remove(at: indexToRemove)
+        else { return }
+        storage.removeFavoritePokemonName(pokemon.name)
+        
+        if let indexToInsertAfter = nonFavoritePokemons.lastIndex(where: {
+            $0.order < pokemon.order || $0.order == pokemon.order && $0.name < pokemon.name
+        }) {
+            let indexToInsert = nonFavoritePokemons.index(after: indexToInsertAfter)
+            if indexToInsert != nonFavoritePokemons.endIndex {
+                nonFavoritePokemons.insert(pokemon, at: indexToInsert)
+            } else {
+                nonFavoritesFetcher?.markPokemonAsIncluded(pokemon)
+            }
+        } else {
+            nonFavoritePokemons.insert(pokemon, at: 0)
+        }
+    }
+}
+
+// MARK: - Decomposition
+
+private extension PokemonService {
+    var arePokemonsInIncreasingOrder: (Pokemon, Pokemon) -> Bool {
+        { $0.order != $1.order ? $0.order < $1.order : $0.name < $1.name }
+    }
+    
+    func predicateForLastIndexToInsertPokemonAfter(pokemon: Pokemon) -> ((Pokemon) -> Bool) {
+        { $0.order < pokemon.order || $0.order == pokemon.order && $0.name < pokemon.name }
     }
 }
 

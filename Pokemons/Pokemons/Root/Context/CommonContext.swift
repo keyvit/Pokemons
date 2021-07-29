@@ -5,7 +5,7 @@
 //  Created by Kristina Marchenko on 27.07.2021.
 //
 
-import Foundation
+import UIKit
 
 final class CommonContext: HasPokemonService {
     let pokemonService: PokemonServiceType
@@ -18,7 +18,7 @@ final class CommonContext: HasPokemonService {
 // MARK: - CoordinatorFactory
 
 extension CommonContext: CoordinatorFactory {
-    func makePokemonListCoordinator(navigation: ModalNavigationControllerType) -> PokemonListCoordinator {
+    func makePokemonListCoordinator(navigation: UINavigationController) -> PokemonListCoordinator {
         PokemonListCoordinator(navigation: navigation, context: self)
     }
 }

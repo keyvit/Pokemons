@@ -18,17 +18,19 @@ enum PokemonServiceError: LocalizedError {
     }
 }
 
-struct PokemonBatch {
-    let pokemons: [Pokemon]
-    let isLoadFinished: Bool
-}
-
 protocol PokemonServiceType {
-    var pokemons: [Pokemon] { get }
+    var favoritePokemons: [Pokemon]? { get }
+    var nonFavoritePokemons: [Pokemon] { get }
+    var allPokemons: [Pokemon] { get }
+    var areAllPokemonsDownloaded: Bool { get }
     
+    func loadFavoritePokemons(completion: @escaping (Result<[Pokemon], PokemonServiceError>) -> Void)
     func loadNextPokemonBatchIfNotAlready(
-        completion: @escaping (Result<PokemonBatch, PokemonServiceError>) -> Void
+        completion: @escaping (Result<[Pokemon], PokemonServiceError>) -> Void
     )
+    
+    func addToFavoritesPokemonWithId(_ id: Int)
+    func removeFromFavoritesPokemonWithId(_ id: Int)
 }
 
 protocol HasPokemonService {

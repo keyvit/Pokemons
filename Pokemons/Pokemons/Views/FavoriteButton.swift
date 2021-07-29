@@ -31,10 +31,18 @@ final class FavoriteButton: UIButton {
     }
     
     func setMode(_ mode: Mode) {
-        let config = UIImage.SymbolConfiguration(pointSize: 10)
-        setImage(Asset.like(configuration: config).image, for: .normal)
-        
-        let title = mode == .like ? L10n.FavoriteButton.like : L10n.FavoriteButton.dislike
+        let title: String
+        let image: UIImage?
+        switch mode {
+        case .like:
+            title = L10n.FavoriteButton.like
+            let config = UIImage.SymbolConfiguration(pointSize: 10)
+            image = Asset.like(configuration: config).image
+        case .dislike:
+            title = L10n.FavoriteButton.dislike
+            image = nil
+        }
+        setImage(image, for: .normal)
         setTitle(title.localizedUppercase, for: .normal)
     }
 }

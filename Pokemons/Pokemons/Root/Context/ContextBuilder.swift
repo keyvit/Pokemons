@@ -14,7 +14,10 @@ enum ContextBuilder {
             baseURL: AppConstants.baseURL,
             defaultLimit: AppConstants.defaultPokemonPageSize
         )
+        let storage = UserDefaultsStorage()
         
-        return CommonContext(pokemonService: PokemonService(pokemonProvider: pokemonProvider))
+        return CommonContext(
+            pokemonService: PokemonService(pokemonProvider: pokemonProvider, storage: storage)
+        )
     }
 }

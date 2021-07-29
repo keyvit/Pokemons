@@ -8,10 +8,11 @@
 import UIKit
 
 final class PokemonListCoordinator {
-    private let context: PokemonListPresenter.Context
-    private weak var navigation: ModalNavigationControllerType?
+    typealias Context = CoordinatorFactory & PokemonListPresenter.Context
+    private let context: Context
+    private weak var navigation: UINavigationController?
     
-    init(navigation: ModalNavigationControllerType, context: PokemonListPresenter.Context) {
+    init(navigation: UINavigationController, context: Context) {
         self.context = context
         self.navigation = navigation
     }
@@ -28,9 +29,27 @@ final class PokemonListCoordinator {
 // MARK: - PokemonListRouter
 
 extension PokemonListCoordinator: PokemonListRouter {
-    func showError(description: String) {
+    func showAcceptableError(description: String) {
         let alert = UIAlertController(title: L10n.Common.error, message: description, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Common.ok, style: .default))
+        alert.addAction(UIAlertAction(title: L10n.Common.ok, style: .cancel))
         navigation?.present(alert, animated: true)
+    }
+    
+    func showRetriableError(
+        description: String,
+        didChooseAccept: @escaping () -> Void,
+        didChooseRetry: @escaping () -> Void
+    ) {
+        let alert = UIAlertController(title: L10n.Common.error, message: description, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Common.ok, style: .cancel) { _ in
+            didChooseAccept()
+        })
+        alert.addAction(UIAlertAction(title: L10n.Common.retry, style: .default) { _ in
+            didChooseRetry()
+        })
+        navigation?.present(alert, animated: true)
+    }
+    
+    func showPokemonDetails(_ pokemon: Pokemon) {
     }
 }

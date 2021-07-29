@@ -52,6 +52,7 @@ enum L10n {
     enum Common {
         static let error = L10n.tr(defaultTable, "common.error")
         static let ok = L10n.tr(defaultTable, "common.ok")
+        static let retry = L10n.tr(defaultTable, "common.retry")
     }
     enum FavoriteButton {
         static let like = L10n.tr(defaultTable, "favorite_button.like")

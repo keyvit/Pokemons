@@ -10,4 +10,5 @@ import Foundation
 enum AppConstants {
     static let baseURL = URL(string: "https://pokeapi.co/api/v2")!
     static let defaultPokemonPageSize = 10
+    static let imagePlaceholder = Asset.pokeball.image
 }
