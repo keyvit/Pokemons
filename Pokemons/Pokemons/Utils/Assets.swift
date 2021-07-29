@@ -49,6 +49,10 @@ enum Asset {
 enum L10n {
     private static let defaultTable = "Localizable"
     
+    enum Common {
+        static let error = L10n.tr(defaultTable, "common.error")
+        static let ok = L10n.tr(defaultTable, "common.ok")
+    }
     enum FavoriteButton {
         static let like = L10n.tr(defaultTable, "favorite_button.like")
         static let dislike = L10n.tr(defaultTable, "favorite_button.dislike")
@@ -67,6 +71,11 @@ enum L10n {
         static let baseExperience = L10n.tr(defaultTable, "pokemon_details.base_experience")
         static let types = L10n.tr(defaultTable, "pokemon_details.types")
         static let abilities = L10n.tr(defaultTable, "pokemon_details.abilities")
+    }
+    enum PokemonFetch {
+        enum Error {
+            static let unknown = L10n.tr(defaultTable, "pokemon_fetch.error.unknown")
+        }
     }
 }
 

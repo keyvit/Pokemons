@@ -16,5 +16,6 @@ protocol APITarget {
 
 /// To be extended when needed
 enum Parameters {
+    case requestPlain
     case requestParameters(parameters: [String: Any], encoding: ParameterEncoding)
 }

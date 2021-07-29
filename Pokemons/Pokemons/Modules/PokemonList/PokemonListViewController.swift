@@ -10,6 +10,7 @@ import TinyConstraints
 
 protocol PokemonListViewType: AnyObject {
     func updateData(_ data: [PokemonList.Section])
+    func hidePagingActivityIndicator()
 }
 
 final class PokemonListViewController: UIViewController {
@@ -22,6 +23,8 @@ final class PokemonListViewController: UIViewController {
         frame: .zero,
         collectionViewLayout: makeCollectionViewLayout()
     )
+    private var activityIndicatorSectionFooterView: UIView?
+    private var isActivityIndicatorVisible = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,11 +45,72 @@ extension PokemonListViewController: PokemonListViewType {
         }
         dataSource.apply(snapshot)
     }
+    
+    func hidePagingActivityIndicator() {
+        let activityIndicator = collectionView.visibleSupplementaryViews(
+            ofKind: UICollectionView.elementKindSectionFooter
+        ).first(where: { $0 is ActivityIndicatorSectionFooterView })
+        if let view = activityIndicator,
+           collectionView.contentOffset.y + collectionView.frame.height > view.frame.origin.y
+        {
+            let snapshot = dataSource.snapshot()
+            collectionView.scrollToItem(
+                at: IndexPath(
+                    item: snapshot.sectionIdentifiers.last.map { snapshot.numberOfItems(inSection: $0) - 1 } ?? 0,
+                    section: snapshot.numberOfSections - 1
+                ),
+                at: .bottom,
+                animated: true
+            )
+        }
+    }
 }
 
 // MARK: - UICollectionViewDelegate
 
 extension PokemonListViewController: UICollectionViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let view = activityIndicatorSectionFooterView else { return }
+        
+        let isActivityIndicatorVisible = collectionView.contentOffset.y + collectionView.frame.height >
+            view.frame.origin.y
+        if self.isActivityIndicatorVisible != isActivityIndicatorVisible {
+            self.isActivityIndicatorVisible = isActivityIndicatorVisible
+            if isActivityIndicatorVisible {
+                presenter.didShowPaginationActivityIndicator()
+            }
+        }
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplaySupplementaryView view: UICollectionReusableView,
+        forElementKind elementKind: String,
+        at indexPath: IndexPath
+    ) {
+        guard elementKind == UICollectionView.elementKindSectionFooter else { return }
+
+        let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+        if case let .all(areMorePokemonsAvailable) = section, areMorePokemonsAvailable {
+            activityIndicatorSectionFooterView = view
+        }
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didEndDisplayingSupplementaryView view: UICollectionReusableView,
+        forElementOfKind elementKind: String,
+        at indexPath: IndexPath
+    ) {
+        guard elementKind == UICollectionView.elementKindSectionFooter else { return }
+
+        let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+        if case let .all(areMorePokemonsAvailable) = section, areMorePokemonsAvailable {
+            activityIndicatorSectionFooterView = nil
+            isActivityIndicatorVisible = false
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let pokemon = dataSource.itemIdentifier(for: indexPath) {        
             // TODO:
@@ -54,7 +118,7 @@ extension PokemonListViewController: UICollectionViewDelegate {
     }
 }
 
-// MARK: - Collection view configuration
+// MARK: - Collection View Configuration
 
 private extension PokemonListViewController {
     func configureView() {
@@ -63,15 +127,26 @@ private extension PokemonListViewController {
         collectionView.backgroundColor = .systemBackground
         collectionView.dataSource = dataSource
         collectionView.delegate = self
+        
         collectionView.register(cellType: PokemonCollectionViewCell.self)
         collectionView.register(
             supplementaryViewType: LabelSectionHeaderView.self,
             ofKind: UICollectionView.elementKindSectionHeader
         )
+        collectionView.register(
+            supplementaryViewType: EmptySupplementaryView.self,
+            ofKind: UICollectionView.elementKindSectionFooter
+        )
+        collectionView.register(
+            supplementaryViewType: ActivityIndicatorSectionFooterView.self,
+            ofKind: UICollectionView.elementKindSectionFooter
+        )
         
         view.addSubview(collectionView)
-        collectionView.edgesToSuperview(excluding: .top)
+        collectionView.leadingToSuperview()
+        collectionView.trailingToSuperview()
         collectionView.top(to: view.safeAreaLayoutGuide)
+        collectionView.bottom(to: view.safeAreaLayoutGuide)
     }
     
     func makeDataSource() -> DataSource {
@@ -85,19 +160,37 @@ private extension PokemonListViewController {
             return cell
         }
         dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
-            guard let self = self, kind == UICollectionView.elementKindSectionHeader else {
+            guard let self = self else { return nil }
+            
+            switch kind {
+            case UICollectionView.elementKindSectionHeader:
+                let view = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    for: indexPath,
+                    viewType: LabelSectionHeaderView.self
+                )
+                let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+                view.setTitle(section.title)
+                
+                return view
+            case UICollectionView.elementKindSectionFooter:
+                let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+                if case let .all(areMorePokemonsAvailable) = section, areMorePokemonsAvailable {
+                    return collectionView.dequeueReusableSupplementaryView(
+                        ofKind: kind,
+                        for: indexPath,
+                        viewType: ActivityIndicatorSectionFooterView.self
+                    )
+                } else {
+                    return collectionView.dequeueReusableSupplementaryView(
+                        ofKind: kind,
+                        for: indexPath,
+                        viewType: EmptySupplementaryView.self
+                    )
+                }
+            default:
                 return nil
             }
-            
-            let view = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                for: indexPath,
-                viewType: LabelSectionHeaderView.self
-            )
-            let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
-            view.setTitle(section.title)
-            
-            return view
         }
         
         return dataSource
@@ -129,11 +222,20 @@ private extension PokemonListViewController {
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(32)
         )
+        let footerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(10)
+        )
         section.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: headerSize,
                 elementKind: UICollectionView.elementKindSectionHeader,
                 alignment: .top
+            ),
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: footerSize,
+                elementKind: UICollectionView.elementKindSectionFooter,
+                alignment: .bottom
             )
         ]
         

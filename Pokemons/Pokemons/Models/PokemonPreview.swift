@@ -10,12 +10,12 @@ import Foundation
 struct PokemonPreview: Hashable {
     let id: Int
     let name: String
-    let image: URL
+    let image: URL?
     let isFavorite: Bool
 }
 
 extension PokemonPreview {
     init(pokemon: Pokemon) {
-        self.init(id: pokemon.id, name: pokemon.name, image: pokemon.image, isFavorite: false) // FIXME: 
+        self.init(id: pokemon.id, name: pokemon.name, image: pokemon.frontImage, isFavorite: false) // FIXME: 
     }
 }

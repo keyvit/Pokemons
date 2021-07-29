@@ -8,22 +8,22 @@
 import Foundation
 
 public struct Pokemon: Decodable {
-    public let id: String
+    public let id: Int
     public let name: String
     public let baseExperience: Int
     public let height: Int
-    public let width: Int
+    public let weight: Int
     public let order: Int
     public let abilities: [PokemonAbility]
     public let types: [PokemonType]
-    public let sprites: [PokemonSprites]
+    public let sprites: PokemonSprites
     
     enum CodingKeys: String, CodingKey {
         case id
         case name
         case baseExperience = "base_experience"
         case height
-        case width
+        case weight
         case order
         case abilities
         case types

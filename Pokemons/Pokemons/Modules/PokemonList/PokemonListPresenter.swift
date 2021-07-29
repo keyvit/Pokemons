@@ -12,7 +12,7 @@ enum PokemonList {
     
     enum SectionType: Hashable {
         case favorite
-        case all
+        case all(areMorePokemonsAvailable: Bool)
         
         var title: String {
             switch self {
@@ -30,15 +30,28 @@ enum PokemonList {
     }
 }
 
+protocol PokemonListRouter {
+    func showError(description: String)
+}
+
 protocol PokemonListPresenterType: PokemonCollectionViewCellDelegate {
     func viewDidLoad()
+    func didShowPaginationActivityIndicator()
 }
 
 final class PokemonListPresenter {
     private weak var view: PokemonListViewType!
     
-    init(view: PokemonListViewType) {
+    typealias Context = HasPokemonService
+    private let context: Context
+    
+    typealias Router = PokemonListRouter
+    private let router: Router
+    
+    init(view: PokemonListViewType, context: Context, router: Router) {
         self.view = view
+        self.context = context
+        self.router = router
     }
 }
 
@@ -46,6 +59,11 @@ final class PokemonListPresenter {
 
 extension PokemonListPresenter: PokemonListPresenterType {
     func viewDidLoad() {
+        loadNextPokemonsIfNotAlready()
+    }
+    
+    func didShowPaginationActivityIndicator() {
+        loadNextPokemonsIfNotAlready()
     }
 }
 
@@ -54,5 +72,30 @@ extension PokemonListPresenter: PokemonListPresenterType {
 extension PokemonListPresenter {
     func pokemonCollectionViewCell(withId id: Int, didTapFavorite isFavorite: Bool) {
         
+    }
+}
+
+// MARK: - Decomposition
+
+private extension PokemonListPresenter {
+    func loadNextPokemonsIfNotAlready() {
+        context.pokemonService.loadNextPokemonBatchIfNotAlready { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case let .success(pokemonBatch):
+                let data: [PokemonList.Section] = [
+                    PokemonList.Section(
+                        type: .all(areMorePokemonsAvailable: !pokemonBatch.isLoadFinished),
+                        pokemonPreviews: self.context.pokemonService.pokemons.map {
+                            PokemonPreview(pokemon: $0)
+                        }
+                    )
+                ]
+                self.view?.updateData(data)
+            case let .failure(error):
+                self.view?.hidePagingActivityIndicator()
+                self.router.showError(description: error.localizedDescription)
+            }
+        }
     }
 }

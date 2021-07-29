@@ -7,18 +7,18 @@
 
 import Foundation
 
-final class CommonContext {
-    let favoritesService: FavoritesServiceType
+final class CommonContext: HasPokemonService {
+    let pokemonService: PokemonServiceType
     
-    init(favoritesService: FavoritesServiceType) {
-        self.favoritesService = favoritesService
+    init(pokemonService: PokemonServiceType) {
+        self.pokemonService = pokemonService
     }
 }
 
 // MARK: - CoordinatorFactory
 
 extension CommonContext: CoordinatorFactory {
-    func makePokemonListCoordinator() -> PokemonListCoordinator {
-        PokemonListCoordinator()
+    func makePokemonListCoordinator(navigation: ModalNavigationControllerType) -> PokemonListCoordinator {
+        PokemonListCoordinator(navigation: navigation, context: self)
     }
 }

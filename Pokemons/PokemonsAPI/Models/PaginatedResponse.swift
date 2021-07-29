@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PaginatedResponse<ResultType: Decodable>: Decodable {
+public struct PaginatedResponse: Decodable {
     public let count: Int
-    public let results: [ResultType]
+    public let results: [NamedAPIResource]
 }

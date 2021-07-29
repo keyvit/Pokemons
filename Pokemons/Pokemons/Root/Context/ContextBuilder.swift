@@ -6,9 +6,15 @@
 //
 
 import Foundation
+import PokemonsAPI
 
 enum ContextBuilder {
     static func buildContext() -> CommonContext {
-        CommonContext(favoritesService: FavoritesService())
+        let pokemonProvider = PokemonProvider(
+            baseURL: AppConstants.baseURL,
+            defaultLimit: AppConstants.defaultPokemonPageSize
+        )
+        
+        return CommonContext(pokemonService: PokemonService(pokemonProvider: pokemonProvider))
     }
 }

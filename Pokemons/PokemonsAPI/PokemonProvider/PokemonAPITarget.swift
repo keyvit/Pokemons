@@ -9,31 +9,36 @@ import Foundation
 import Alamofire
 
 enum PokemonAPITarget {
-    case getPokemons(limit: Int, offset: Int)
+    case getPokemonsPage(limit: Int, offset: Int)
+    case getPokemon(name: String)
 }
 
 extension PokemonAPITarget: APITarget {
     var method: HTTPMethod {
         switch self {
-        case .getPokemons:
+        case .getPokemonsPage, .getPokemon:
             return .get
         }
     }
     
     var path: String {
         switch self {
-        case .getPokemons:
+        case .getPokemonsPage:
             return ""
+        case let .getPokemon(name):
+            return name
         }
     }
     
     var parameters: Parameters {
         switch self {
-        case let .getPokemons(limit, offset):
+        case let .getPokemonsPage(limit, offset):
             return .requestParameters(
                 parameters: ["limit": limit, "offset": offset],
                 encoding: URLEncoding.queryString
             )
+        case .getPokemon:
+            return .requestPlain
         }
     }
 }

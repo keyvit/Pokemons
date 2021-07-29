@@ -18,6 +18,8 @@ extension APIRequest {
         var request = try URLRequest(url: baseURL.appendingPathComponent(target.path), method: target.method)
         
         switch target.parameters {
+        case .requestPlain:
+            break
         case let .requestParameters(parameters, encoding):
             request = try encoding.encode(request, with: parameters)
         }

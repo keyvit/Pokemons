@@ -8,5 +8,5 @@
 import Foundation
 
 protocol CoordinatorFactory {
-    func makePokemonListCoordinator() -> PokemonListCoordinator
+    func makePokemonListCoordinator(navigation: ModalNavigationControllerType) -> PokemonListCoordinator
 }

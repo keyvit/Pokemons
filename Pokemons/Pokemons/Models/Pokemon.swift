@@ -10,7 +10,8 @@ import Foundation
 struct Pokemon {
     let id: Int
     let name: String
-    let image: URL
+    let frontImage: URL?
+    let backImage: URL?
     let weight: Int
     let height: Int
     let order: Int

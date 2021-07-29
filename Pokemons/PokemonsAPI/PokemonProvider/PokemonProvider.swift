@@ -23,22 +23,52 @@ public final class PokemonProvider: PokemonsAPIProvider {
 // MARK: - PokemonProviderType
 
 extension PokemonProvider: PokemonProviderType {
-    public func fetchPokemons(
+    public func fetchPokemonsPage(
         limit: Int,
         offset: Int,
-        completion: @escaping (Result<PaginatedResponse<Pokemon>, NetworkError>) -> Void
+        completion: @escaping (Result<PaginatedResponse, NetworkError>) -> Void
     ) {
         session
-            .request(request(for: .getPokemons(limit: limit, offset: offset)))
+            .request(request(for: .getPokemonsPage(limit: limit, offset: offset)))
             .validate()
             .responseDecodable(completionHandler: getResponseHandler(completion: completion))
     }
     
-    public func fetchPokemons(
+    public func fetchPokemonsPage(
         offset: Int,
-        completion: @escaping (Result<PaginatedResponse<Pokemon>, NetworkError>) -> Void
+        completion: @escaping (Result<PaginatedResponse, NetworkError>) -> Void
     ) {
-        fetchPokemons(limit: defaultLimit, offset: offset, completion: completion)
+        fetchPokemonsPage(limit: defaultLimit, offset: offset, completion: completion)
+    }
+    
+    public func fetchPokemons(names: [String], completion: @escaping (FetchResult) -> Void) {
+        var fetched: [Pokemon] = []
+        var failedToFetch: [String: NetworkError] = [:]
+        let requestsToFinish = names.count
+        var requestsFinished = 0
+        
+        let requestCompletion: (String, Result<Pokemon, NetworkError>) -> Void = { name, result in
+            requestsFinished += 1
+            switch result {
+            case let .success(pokemon):
+                fetched.append(pokemon)
+            case let .failure(error):
+                failedToFetch[name] = error
+            }
+            if requestsFinished == requestsToFinish {
+                completion(FetchResult(fetched: fetched, failedToFetch: failedToFetch))
+            }
+        }
+        
+        names.forEach { name in
+            let completion: (Result<Pokemon, NetworkError>) -> Void = { result in
+                requestCompletion(name, result)
+            }
+            session
+                .request(request(for: .getPokemon(name: name)))
+                .validate()
+                .responseDecodable(completionHandler: getResponseHandler(completion: completion))
+        }
     }
 }
 

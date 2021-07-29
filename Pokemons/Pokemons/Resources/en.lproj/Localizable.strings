@@ -1,3 +1,6 @@
+"common.error" = "Error";
+"common.ok" = "OK";
+"pokemon_fetch.error.unknown" = "Unable to download pokemons";
 "favorite_button.like" = "Like";
 "favorite_button.dislike" = "Dislike";
 "pokemon_list.section.all" = "All";

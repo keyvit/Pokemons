@@ -16,8 +16,9 @@ final class AppCoordinator {
     }
     
     func run() {
-        let coordinator = context.makePokemonListCoordinator()
-        let navigationController = UINavigationController(rootViewController: coordinator.makeInitial())
+        let navigationController = UINavigationController()
+        let coordinator = context.makePokemonListCoordinator(navigation: navigationController)
+        navigationController.pushViewController(coordinator.makeInitial(), animated: false)
         navigation.put(navigationController)
     }
 }

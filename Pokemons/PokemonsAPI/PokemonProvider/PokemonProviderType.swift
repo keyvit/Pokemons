@@ -8,14 +8,16 @@
 import Foundation
 
 public protocol PokemonProviderType {
-    func fetchPokemons(
+    func fetchPokemonsPage(
         limit: Int,
         offset: Int,
-        completion: @escaping (Result<PaginatedResponse<Pokemon>, NetworkError>) -> Void
+        completion: @escaping (Result<PaginatedResponse, NetworkError>) -> Void
     )
     
-    func fetchPokemons(
+    func fetchPokemonsPage(
         offset: Int,
-        completion: @escaping (Result<PaginatedResponse<Pokemon>, NetworkError>) -> Void
+        completion: @escaping (Result<PaginatedResponse, NetworkError>) -> Void
     )
+    
+    func fetchPokemons(names: [String], completion: @escaping (FetchResult) -> Void)
 }
