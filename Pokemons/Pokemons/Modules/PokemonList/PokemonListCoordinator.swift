@@ -51,5 +51,8 @@ extension PokemonListCoordinator: PokemonListRouter {
     }
     
     func showPokemonDetails(_ pokemon: Pokemon) {
+        let coordinator = context.makePokemonDetailsCoordinator(for: pokemon)
+        let controller = coordinator.makeInitial()
+        navigation?.pushViewController(controller, animated: true)
     }
 }

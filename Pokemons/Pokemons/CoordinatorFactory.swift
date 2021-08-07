@@ -9,4 +9,5 @@ import UIKit
 
 protocol CoordinatorFactory {
     func makePokemonListCoordinator(navigation: UINavigationController) -> PokemonListCoordinator
+    func makePokemonDetailsCoordinator(for pokemon: Pokemon) -> PokemonDetailsCoordinator
 }
