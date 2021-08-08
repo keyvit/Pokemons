@@ -15,6 +15,14 @@ final class CommonContext: HasPokemonService {
     }
 }
 
+// MARK: - CreatesInterfaceService
+
+extension CommonContext: CreatesInterfaceService {
+    func makeInterfaceService() -> InterfaceServiceType {
+        InterfaceService()
+    }
+}
+
 // MARK: - CoordinatorFactory
 
 extension CommonContext: CoordinatorFactory {

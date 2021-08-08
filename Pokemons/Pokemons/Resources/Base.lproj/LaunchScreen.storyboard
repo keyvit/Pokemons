@@ -17,8 +17,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pokeball" translatesAutoresizingMaskIntoConstraints="NO" id="2X7-X1-Bjy">
-                                <rect key="frame" x="134.5" y="206" width="145" height="494"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pikachu_logo" translatesAutoresizingMaskIntoConstraints="NO" id="2X7-X1-Bjy">
+                                <rect key="frame" x="67" y="303" width="280" height="300"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -26,7 +26,7 @@
                         <constraints>
                             <constraint firstItem="2X7-X1-Bjy" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="Ahs-rb-rs2"/>
                             <constraint firstItem="2X7-X1-Bjy" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="L6k-3o-lkF"/>
-                            <constraint firstItem="2X7-X1-Bjy" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="0.35" id="t0A-2w-kRF"/>
+                            <constraint firstItem="2X7-X1-Bjy" firstAttribute="height" relation="lessThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="height" multiplier="0.8" id="a2n-01-zt5"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -36,7 +36,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="pokeball" width="495" height="494"/>
+        <image name="pikachu_logo" width="280" height="300"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -42,9 +42,13 @@ final class PokemonListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureView()
         presenter.viewDidLoad()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        presenter.traitCollectionDidChange()
     }
 }
 
@@ -246,48 +250,55 @@ private extension PokemonListViewController {
     }
     
     func makeCollectionViewLayout() -> UICollectionViewLayout {
-        let contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6)
-        
-        let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.5),
-            heightDimension: .fractionalHeight(1)
-        ))
-        item.contentInsets = contentInsets
-        
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalWidth(0.5)
-            ),
-            subitem: item,
-            count: 2
-        )
-
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = contentInsets
-        
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(32)
-        )
-        let footerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(10)
-        )
-        section.boundarySupplementaryItems = [
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: headerSize,
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top
-            ),
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: footerSize,
-                elementKind: UICollectionView.elementKindSectionFooter,
-                alignment: .bottom
+        UICollectionViewCompositionalLayout { [weak presenter] sectionIndex, _ in
+            let maxItemsInRowCount = presenter?.maxItemsInRowCount ?? 2
+            
+            let contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6)
+            
+            let maxCountDependantWidth = NSCollectionLayoutDimension.fractionalWidth(
+                1.0 / CGFloat(maxItemsInRowCount)
             )
-        ]
-        
-        return UICollectionViewCompositionalLayout(section: section)
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
+                widthDimension: maxCountDependantWidth,
+                heightDimension: .fractionalHeight(1)
+            ))
+            item.contentInsets = contentInsets
+            
+            let group = NSCollectionLayoutGroup.horizontal(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: maxCountDependantWidth
+                ),
+                subitem: item,
+                count: maxItemsInRowCount
+            )
+
+            let section = NSCollectionLayoutSection(group: group)
+            section.contentInsets = contentInsets
+            
+            let headerSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .estimated(32)
+            )
+            let footerSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .estimated(10)
+            )
+            section.boundarySupplementaryItems = [
+                NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: headerSize,
+                    elementKind: UICollectionView.elementKindSectionHeader,
+                    alignment: .top
+                ),
+                NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: footerSize,
+                    elementKind: UICollectionView.elementKindSectionFooter,
+                    alignment: .bottom
+                )
+            ]
+            
+            return section
+        }
     }
 }
 

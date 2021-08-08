@@ -14,17 +14,16 @@ final class PokemonService {
     var allPokemons: [Pokemon] {
         favoritePokemons ?? [] + nonFavoritePokemons
     }
-    
     var areAllPokemonsDownloaded: Bool {
         allPossiblePokemonCount == nonFavoritePokemons.count + (favoritePokemons?.count ?? 0)
     }
+    var pokemonBatchLimit = AppConstants.defaultPokemonPageSize
     
     typealias Storage = StoresFavoritePokemonsNames
     private let storage: Storage
     private let pokemonProvider: PokemonProviderType
     
     private var allPossiblePokemonCount: Int?
-    private let limit = AppConstants.defaultPokemonPageSize
     private var offset = 0
     private var isPokemonBatchDownloadInProgress = false
     
@@ -94,7 +93,7 @@ extension PokemonService: PokemonServiceType {
             let fetcher = NonFavoritePokemonBatchFetcher(
                 pokemonProvider: pokemonProvider,
                 initialOffset: offset,
-                limit: limit,
+                limit: pokemonBatchLimit,
                 namesToIgnore: favoritePokemons.map { $0.map { $0.name } } ?? storage.favoritePokemonsNames
             )
             nonFavoritesFetcher = fetcher
