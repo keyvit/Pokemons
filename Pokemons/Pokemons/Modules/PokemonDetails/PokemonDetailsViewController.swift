@@ -14,7 +14,7 @@ private struct Constants {
 private let consts = Constants()
 
 protocol PokemonDetailsViewType: AnyObject {
-    func configure(basicInfo: PokemonDetails.BasicInfo, sections: [PokemonDetails.Section])
+    func configure(basicInfo: BasicPokemonInfo, sections: [PokemonDetails.Section])
 }
 
 final class PokemonDetailsViewController: UIViewController {
@@ -23,7 +23,7 @@ final class PokemonDetailsViewController: UIViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<PokemonDetails.SectionType, PokemonDetails.Item>
     private lazy var dataSource = makeDataSource()
     private lazy var tableView = UITableView()
-    private lazy var basicInfoView = PokemonBasicInfoView(
+    private lazy var basicInfoView = BasicPokemonInfoView(
         frame: CGRect(origin: .zero, size: CGSize(width: 0, height: 500))
     )
     
@@ -52,12 +52,8 @@ final class PokemonDetailsViewController: UIViewController {
 // MARK: PokemonDetailsViewType
 
 extension PokemonDetailsViewController: PokemonDetailsViewType {
-    func configure(basicInfo: PokemonDetails.BasicInfo, sections: [PokemonDetails.Section]) {
-        basicInfoView.configure(
-            frontImage: basicInfo.frontImage,
-            backImage: basicInfo.backImage,
-            dictionary: basicInfo.characteristics
-        )
+    func configure(basicInfo: BasicPokemonInfo, sections: [PokemonDetails.Section]) {
+        basicInfoView.configure(with: basicInfo)
         
         var snapshot = Snapshot()
         sections.forEach { section in

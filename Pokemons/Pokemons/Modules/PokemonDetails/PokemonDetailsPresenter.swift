@@ -10,12 +10,6 @@ import Foundation
 enum PokemonDetails {
     typealias Item = String
     
-    struct BasicInfo {
-        let frontImage: URL?
-        let backImage: URL?
-        let characteristics: [String: String]
-    }
-    
     enum SectionType: Int {
         case types
         case abilities
@@ -55,15 +49,15 @@ final class PokemonDetailsPresenter {
 extension PokemonDetailsPresenter: PokemonDetailsPresenterType {
     func viewDidLoad() {
         let l10n = L10n.PokemonDetails.self
-        let basicInfo = PokemonDetails.BasicInfo(
+        let basicInfo = BasicPokemonInfo(
             frontImage: pokemon.frontImage,
             backImage: pokemon.backImage,
             characteristics: [
-                l10n.name: pokemon.name,
-                l10n.weight: String(pokemon.weight),
-                l10n.height: String(pokemon.height),
-                l10n.order: String(pokemon.order),
-                l10n.baseExperience: String(pokemon.baseExperience)
+                .init(characteristic: l10n.name, value: pokemon.name),
+                .init(characteristic: l10n.weight, value: String(pokemon.weight)),
+                .init(characteristic: l10n.height, value: String(pokemon.height)),
+                .init(characteristic: l10n.order, value: String(pokemon.order)),
+                .init(characteristic: l10n.baseExperience, value: String(pokemon.baseExperience))
             ]
         )
         var sections: [PokemonDetails.Section] = []

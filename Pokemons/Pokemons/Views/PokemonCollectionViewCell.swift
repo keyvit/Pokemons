@@ -10,11 +10,6 @@ import Reusable
 import TinyConstraints
 import Kingfisher
 
-private struct Constants {
-    let placeholder = Asset.pokeball.image
-}
-private let consts = Constants()
-
 protocol PokemonCollectionViewCellDelegate: AnyObject {
     func pokemonCollectionViewCell(withId id: Int, didTapFavorite isFavorite: Bool)
 }
@@ -71,7 +66,7 @@ final class PokemonCollectionViewCell: UICollectionViewCell, Reusable {
     func configure(with viewModel: ViewModel) {
         self.viewModel = viewModel
         
-        iconImageView.kf.setImage(with: viewModel.image, placeholder: consts.placeholder)
+        iconImageView.kf.setImage(with: viewModel.image, placeholder: AppConstants.imagePlaceholder)
         nameLabel.text = viewModel.name
         favoriteButton.setMode(viewModel.isFavorite ? .dislike : .like)
     }
@@ -85,25 +80,21 @@ private extension PokemonCollectionViewCell {
         layer.borderWidth = 1
         layer.borderColor = UIColor.black.cgColor
         
-        let addStretchableView = {
-            let stretchableView = UIView()
-            stretchableView.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
-            self.stackView.addArrangedSubview(stretchableView)
-        }
-        
         contentView.addSubview(stackView)
-        addStretchableView()
-        stackView.addArrangedSubview(iconImageView)
-        addStretchableView()
+        
+        let imageContainterView = UIView()
+        imageContainterView.addSubview(iconImageView)
+        iconImageView.centerInSuperview()
+        iconImageView.widthToSuperview(relation: .equalOrLess)
+        iconImageView.heightToSuperview(multiplier: 0.9, relation: .equalOrLess)
+        stackView.addArrangedSubview(imageContainterView)
+        
         stackView.addArrangedSubview(nameLabel)
         stackView.addArrangedSubview(favoriteButton)
         
         stackView.heightToSuperview(multiplier: 0.9)
         stackView.widthToSuperview(multiplier: 0.85)
         stackView.centerInSuperview()
-        iconImageView.setContentHuggingPriority(.defaultLow - 1, for: .vertical)
-        iconImageView.centerYToSuperview(multiplier: 0.5)
-        iconImageView.height(to: contentView, multiplier: 0.4, relation: .equalOrLess)
     }
     
     @objc func didTapFavorite() {

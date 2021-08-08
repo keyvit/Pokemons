@@ -74,16 +74,16 @@ extension PokemonService: PokemonServiceType {
         let completion: (Result<PokemonBatchFetchResult, NetworkError>) -> Void = { [weak self] result in
             guard let self = self else { return }
             self.isPokemonBatchDownloadInProgress = false
-            if case let .success(fetchResult) = result {
-                self.allPossiblePokemonCount = fetchResult.allPossiblePokemonCount
-                self.nonFavoritePokemons.append(
-                    contentsOf: fetchResult.pokemons.sorted(by: self.arePokemonsInIncreasingOrder)
-                )
-                self.offset = fetchResult.resultOffset
-                self.nonFavoritesFetcher = nil
-            }
             let mapped = result
-                .map { $0.pokemons }
+                .map { fetchResult -> [Pokemon] in
+                    self.allPossiblePokemonCount = fetchResult.allPossiblePokemonCount
+                    let sorted = fetchResult.pokemons.sorted(by: self.arePokemonsInIncreasingOrder)
+                    self.nonFavoritePokemons.append(contentsOf: sorted)
+                    self.offset = fetchResult.resultOffset
+                    self.nonFavoritesFetcher = nil
+                    
+                    return sorted
+                }
                 .mapError(Self.map(networkError:))
             completion(mapped)
         }

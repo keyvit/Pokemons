@@ -1,5 +1,5 @@
 //
-//  PokemonBasicInfoView.swift
+//  BasicPokemonInfoView.swift
 //  Pokemons
 //
 //  Created by Kristina Marchenko on 29.07.2021.
@@ -14,9 +14,9 @@ private struct Constants {
 }
 private let consts = Constants()
 
-// MARK: - PokemonBasicInfoView
+// MARK: - BasicPokemonInfoView
 
-final class PokemonBasicInfoView: UIView {
+final class BasicPokemonInfoView: UIView {
     private lazy var imagesContainerView = UIView()
     private lazy var frontImageView = UIImageView()
     private lazy var backImageView = UIImageView()
@@ -39,19 +39,19 @@ final class PokemonBasicInfoView: UIView {
         setupView()
     }
     
-    func configure(frontImage: URL?, backImage: URL?, dictionary: [String: String]) {
+    func configure(with model: BasicPokemonInfo) {
         let imageProcessor = ResizingImageProcessor(
             referenceSize: CGSize(width: consts.imageSizeDimension, height: consts.imageSizeDimension),
             mode: .aspectFit
         )
         
         frontImageView.kf.setImage(
-            with: frontImage,
+            with: model.frontImage,
             placeholder: consts.placeholder,
             options: [.processor(imageProcessor)]
         )
         backImageView.kf.setImage(
-            with: backImage,
+            with: model.backImage,
             placeholder: consts.placeholder,
             options: [.processor(imageProcessor)]
         )
@@ -65,9 +65,9 @@ final class PokemonBasicInfoView: UIView {
                 }
         }
         
-        for (key, value) in dictionary {
+        for char in model.characteristics {
             let view = KeyValueView()
-            view.configure(key: key, value: value)
+            view.configure(key: char.characteristic, value: char.value)
             keyValueStackView.addArrangedSubview(view)
         }
     }
@@ -75,7 +75,7 @@ final class PokemonBasicInfoView: UIView {
 
 // MARK: Setup
 
-private extension PokemonBasicInfoView {
+private extension BasicPokemonInfoView {
     func setupView() {
         preservesSuperviewLayoutMargins = true
         

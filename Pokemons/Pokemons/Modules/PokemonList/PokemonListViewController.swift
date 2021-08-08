@@ -246,12 +246,13 @@ private extension PokemonListViewController {
     }
     
     func makeCollectionViewLayout() -> UICollectionViewLayout {
-        let spacing: CGFloat = 12
+        let contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6)
         
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(0.5),
             heightDimension: .fractionalHeight(1)
         ))
+        item.contentInsets = contentInsets
         
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
@@ -261,11 +262,9 @@ private extension PokemonListViewController {
             subitem: item,
             count: 2
         )
-        group.interItemSpacing = .fixed(spacing)
 
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = spacing
-        section.contentInsets = .init(top: 4, leading: spacing, bottom: spacing, trailing: spacing)
+        section.contentInsets = contentInsets
         
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
