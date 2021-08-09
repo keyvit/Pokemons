@@ -43,6 +43,8 @@ private extension PokemonsAPIProvider {
     }
 }
 
+// MARK: - AFError+isNetworkConnectionError
+
 private extension AFError {
     var isNetworkConnectionError: Bool {
         var err = self

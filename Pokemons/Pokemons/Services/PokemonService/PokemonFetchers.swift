@@ -1,5 +1,5 @@
 //
-//  PokemonFetcher.swift
+//  PokemonFetchers.swift
 //  Pokemons
 //
 //  Created by Kristina Marchenko on 29.07.2021.

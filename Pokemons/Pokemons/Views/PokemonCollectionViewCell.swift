@@ -76,7 +76,7 @@ final class PokemonCollectionViewCell: UICollectionViewCell, Reusable {
         
         iconImageView.kf.setImage(with: viewModel.image, placeholder: AppConstants.imagePlaceholder)
         nameLabel.text = viewModel.name
-        favoriteButton.setMode(viewModel.isFavorite ? .dislike : .like)
+        favoriteButton.mode = viewModel.isFavorite ? .dislike : .like
     }
 }
 

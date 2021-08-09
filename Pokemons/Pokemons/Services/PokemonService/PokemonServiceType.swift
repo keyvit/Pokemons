@@ -20,8 +20,9 @@ enum PokemonServiceError: LocalizedError {
 
 protocol PokemonServiceType: AnyObject {
     var favoritePokemons: [Pokemon]? { get }
-    var nonFavoritePokemons: [Pokemon] { get }
+    var nonFavoritePokemons: [Pokemon]? { get }
     var allPokemons: [Pokemon] { get }
+    
     var areAllPokemonsDownloaded: Bool { get }
     var pokemonBatchLimit: Int { get set }
     

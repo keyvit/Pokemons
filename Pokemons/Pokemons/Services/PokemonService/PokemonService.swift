@@ -10,12 +10,17 @@ import PokemonsAPI
 
 final class PokemonService {
     private(set) var favoritePokemons: [Pokemon]?
-    private(set) var nonFavoritePokemons: [Pokemon] = []
+    private(set) var nonFavoritePokemons: [Pokemon]?
     var allPokemons: [Pokemon] {
-        favoritePokemons ?? [] + nonFavoritePokemons
+        (favoritePokemons ?? []) + (nonFavoritePokemons ?? [])
     }
+    
     var areAllPokemonsDownloaded: Bool {
-        allPossiblePokemonCount == nonFavoritePokemons.count + (favoritePokemons?.count ?? 0)
+        if let nonFavorite = nonFavoritePokemons?.count, let favorite = favoritePokemons?.count {
+            return allPossiblePokemonCount == nonFavorite + favorite
+        } else {
+            return false
+        }
     }
     var pokemonBatchLimit = AppConstants.defaultPokemonPageSize
     
@@ -75,9 +80,12 @@ extension PokemonService: PokemonServiceType {
             self.isPokemonBatchDownloadInProgress = false
             let mapped = result
                 .map { fetchResult -> [Pokemon] in
+                    if self.nonFavoritePokemons == nil {
+                        self.nonFavoritePokemons = []
+                    }
                     self.allPossiblePokemonCount = fetchResult.allPossiblePokemonCount
                     let sorted = fetchResult.pokemons.sorted(by: self.arePokemonsInIncreasingOrder)
-                    self.nonFavoritePokemons.append(contentsOf: sorted)
+                    self.nonFavoritePokemons?.append(contentsOf: sorted)
                     self.offset = fetchResult.resultOffset
                     self.nonFavoritesFetcher = nil
                     
@@ -102,8 +110,9 @@ extension PokemonService: PokemonServiceType {
     }
     
     func addToFavoritesPokemonWithId(_ id: Int) {
-        guard let indexToRemove = nonFavoritePokemons.firstIndex(where: { $0.id == id }) else { return }
-        let pokemon = nonFavoritePokemons.remove(at: indexToRemove)
+        guard let indexToRemove = nonFavoritePokemons?.firstIndex(where: { $0.id == id }),
+              let pokemon = nonFavoritePokemons?.remove(at: indexToRemove)
+        else { return }
         
         let index = favoritePokemons?
             .lastIndex(where: predicateForLastIndexToInsertPokemonAfter(pokemon: pokemon))
@@ -119,17 +128,17 @@ extension PokemonService: PokemonServiceType {
         else { return }
         storage.removeFavoritePokemonName(pokemon.name)
         
-        if let indexToInsertAfter = nonFavoritePokemons.lastIndex(where: {
+        if let indexToInsertAfter = nonFavoritePokemons?.lastIndex(where: {
             $0.order < pokemon.order || $0.order == pokemon.order && $0.name < pokemon.name
         }) {
-            let indexToInsert = nonFavoritePokemons.index(after: indexToInsertAfter)
-            if indexToInsert != nonFavoritePokemons.endIndex {
-                nonFavoritePokemons.insert(pokemon, at: indexToInsert)
+            if let indexToInsert = nonFavoritePokemons?.index(after: indexToInsertAfter),
+               indexToInsert != nonFavoritePokemons?.endIndex {
+                nonFavoritePokemons?.insert(pokemon, at: indexToInsert)
             } else {
                 nonFavoritesFetcher?.markPokemonAsIncluded(pokemon)
             }
         } else {
-            nonFavoritePokemons.insert(pokemon, at: 0)
+            nonFavoritePokemons?.insert(pokemon, at: 0)
         }
     }
 }
@@ -154,9 +163,7 @@ private extension PokemonService {
         switch networkError {
         case let .connectionError(error):
             description = error.localizedDescription
-        case .generic:
-            description = L10n.PokemonFetch.Error.unknown
-        case .other:
+        case .generic, .other:
             description = L10n.PokemonFetch.Error.unknown
         }
         

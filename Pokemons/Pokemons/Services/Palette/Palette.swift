@@ -15,7 +15,7 @@ struct Palette: PaletteType {
     var outlineColor: UIColor {
         UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .dark {
-                return UIColor.separator
+                return UIColor.systemGray2
             } else {
                 return UIColor.black
             }

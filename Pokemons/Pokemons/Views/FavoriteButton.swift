@@ -14,7 +14,23 @@ final class FavoriteButton: UIButton {
         case like
         case dislike
     }
-    private var mode: Mode = .dislike
+    var mode: Mode = .dislike {
+        didSet {
+            let title: String
+            let image: UIImage?
+            switch mode {
+            case .like:
+                title = L10n.FavoriteButton.like
+                let config = UIImage.SymbolConfiguration(pointSize: 10)
+                image = Asset.like(configuration: config).image
+            case .dislike:
+                title = L10n.FavoriteButton.dislike
+                image = nil
+            }
+            setImage(image, for: .normal)
+            setTitle(title.localizedUppercase, for: .normal)
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,7 +44,6 @@ final class FavoriteButton: UIButton {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
         layer.cornerRadius = bounds.height / 4
     }
     
@@ -36,25 +51,9 @@ final class FavoriteButton: UIButton {
         super.traitCollectionDidChange(previousTraitCollection)
         setBorderColor()
     }
-    
-    func setMode(_ mode: Mode) {
-        let title: String
-        let image: UIImage?
-        switch mode {
-        case .like:
-            title = L10n.FavoriteButton.like
-            let config = UIImage.SymbolConfiguration(pointSize: 10)
-            image = Asset.like(configuration: config).image
-        case .dislike:
-            title = L10n.FavoriteButton.dislike
-            image = nil
-        }
-        setImage(image, for: .normal)
-        setTitle(title.localizedUppercase, for: .normal)
-    }
 }
 
-// MARK: - Decomposition
+// MARK: - Configuration
 
 private extension FavoriteButton {
     func commonInit() {
@@ -65,7 +64,7 @@ private extension FavoriteButton {
         contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         imageEdgeInsets.left = 4
         semanticContentAttribute = .forceRightToLeft
-        setMode(.dislike)
+        mode = .dislike
     }
     
     func setBorderColor() {

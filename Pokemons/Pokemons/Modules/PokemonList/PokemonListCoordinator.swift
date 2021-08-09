@@ -7,6 +7,17 @@
 
 import UIKit
 
+protocol PokemonListRouter {
+    func showAcceptableError(description: String)
+    func showRetriableError(
+        description: String,
+        didChooseAccept: @escaping () -> Void,
+        didChooseRetry: @escaping () -> Void
+    )
+    
+    func showPokemonDetails(_ pokemon: Pokemon)
+}
+
 final class PokemonListCoordinator {
     typealias Context = CoordinatorFactory & PokemonListPresenter.Context
     private let context: Context

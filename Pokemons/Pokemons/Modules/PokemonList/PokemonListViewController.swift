@@ -11,21 +11,16 @@ import TinyConstraints
 protocol PokemonListViewType: AnyObject {
     func setPullToRefreshEnabled(_ isEnabled: Bool)
     func stopRefreshControlIfAny()
+    func setActivityIndicatorAnimating(_ isAnimating: Bool)
+    func hidePagingActivityIndicator()
     
     func updateData(_ data: [PokemonList.Section])
     func appendItems(items: [PokemonList.Item], to section: PokemonList.SectionType)
-    
-    func setActivityIndicatorAnimating(_ isAnimating: Bool)
-    func hidePagingActivityIndicator()
 }
 
 final class PokemonListViewController: UIViewController {
-    var presenter: PokemonListPresenterType!
+    var presenter: PokemonList.Presenter!
     
-    private lazy var collectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: makeCollectionViewLayout()
-    )
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .large)
         activityIndicator.color = .systemGray
@@ -33,11 +28,15 @@ final class PokemonListViewController: UIViewController {
         
         return activityIndicator
     }()
+    private lazy var collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeCollectionViewLayout()
+    )
+    private var activityIndicatorSectionFooterView: UIView?
     
     typealias Snapshot = NSDiffableDataSourceSnapshot<PokemonList.SectionType, PokemonList.Item>
     typealias DataSource = UICollectionViewDiffableDataSource<PokemonList.SectionType, PokemonList.Item>
     private lazy var dataSource = makeDataSource()
-    private var activityIndicatorSectionFooterView: UIView?
     private var isPaginationActivityIndicatorVisible = false
     
     override func viewDidLoad() {
@@ -62,12 +61,40 @@ extension PokemonListViewController: PokemonListViewType {
             refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
             collectionView.refreshControl = refreshControl
         } else {
+            stopRefreshControlIfAny()
             collectionView.refreshControl = nil
         }
     }
     
     func stopRefreshControlIfAny() {
         collectionView.refreshControl?.endRefreshing()
+    }
+    
+    func setActivityIndicatorAnimating(_ isAnimating: Bool) {
+        if isAnimating {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
+    }
+    
+    func hidePagingActivityIndicator() {
+        let activityIndicator = collectionView
+            .visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionFooter)
+            .first(where: { $0 is ActivityIndicatorSectionFooterView })
+        if let indicator = activityIndicator,
+           collectionView.contentOffset.y + collectionView.frame.height > indicator.frame.origin.y
+        {
+            let snapshot = dataSource.snapshot()
+            collectionView.scrollToItem(
+                at: IndexPath(
+                    item: snapshot.sectionIdentifiers.last.map { snapshot.numberOfItems(inSection: $0) - 1 } ?? 0,
+                    section: snapshot.numberOfSections - 1
+                ),
+                at: .bottom,
+                animated: true
+            )
+        }
     }
     
     func updateData(_ data: [PokemonList.Section]) {
@@ -84,33 +111,6 @@ extension PokemonListViewController: PokemonListViewType {
         snapshot.appendItems(items, toSection: section)
         dataSource.apply(snapshot)
     }
-    
-    func setActivityIndicatorAnimating(_ isAnimating: Bool) {
-        if isAnimating {
-            activityIndicator.startAnimating()
-        } else {
-            activityIndicator.stopAnimating()
-        }
-    }
-    
-    func hidePagingActivityIndicator() {
-        let activityIndicator = collectionView.visibleSupplementaryViews(
-            ofKind: UICollectionView.elementKindSectionFooter
-        ).first(where: { $0 is ActivityIndicatorSectionFooterView })
-        if let view = activityIndicator,
-           collectionView.contentOffset.y + collectionView.frame.height > view.frame.origin.y
-        {
-            let snapshot = dataSource.snapshot()
-            collectionView.scrollToItem(
-                at: IndexPath(
-                    item: snapshot.sectionIdentifiers.last.map { snapshot.numberOfItems(inSection: $0) - 1 } ?? 0,
-                    section: snapshot.numberOfSections - 1
-                ),
-                at: .bottom,
-                animated: true
-            )
-        }
-    }
 }
 
 // MARK: - UICollectionViewDelegate
@@ -119,11 +119,10 @@ extension PokemonListViewController: UICollectionViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let view = activityIndicatorSectionFooterView else { return }
         
-        let isActivityIndicatorVisible = collectionView.contentOffset.y + collectionView.frame.height >
-            view.frame.origin.y
-        if self.isPaginationActivityIndicatorVisible != isActivityIndicatorVisible {
-            self.isPaginationActivityIndicatorVisible = isActivityIndicatorVisible
-            if isActivityIndicatorVisible {
+        let isVisible = collectionView.contentOffset.y + collectionView.frame.height > view.frame.origin.y
+        if self.isPaginationActivityIndicatorVisible != isVisible {
+            self.isPaginationActivityIndicatorVisible = isVisible
+            if isVisible {
                 presenter.didShowPaginationActivityIndicator()
             }
         }
@@ -251,15 +250,14 @@ private extension PokemonListViewController {
     
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { [weak presenter] sectionIndex, _ in
-            let maxItemsInRowCount = presenter?.maxItemsInRowCount ?? 2
-            
+            let maxItemsInRow = presenter?.maxItemsInRow ?? 2
             let contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6)
             
-            let maxCountDependantWidth = NSCollectionLayoutDimension.fractionalWidth(
-                1.0 / CGFloat(maxItemsInRowCount)
+            let maxWidthDimension = NSCollectionLayoutDimension.fractionalWidth(
+                1.0 / CGFloat(maxItemsInRow)
             )
             let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
-                widthDimension: maxCountDependantWidth,
+                widthDimension: maxWidthDimension,
                 heightDimension: .fractionalHeight(1)
             ))
             item.contentInsets = contentInsets
@@ -267,10 +265,10 @@ private extension PokemonListViewController {
             let group = NSCollectionLayoutGroup.horizontal(
                 layoutSize: NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1),
-                    heightDimension: maxCountDependantWidth
+                    heightDimension: maxWidthDimension
                 ),
                 subitem: item,
-                count: maxItemsInRowCount
+                count: maxItemsInRow
             )
 
             let section = NSCollectionLayoutSection(group: group)
@@ -282,7 +280,7 @@ private extension PokemonListViewController {
             )
             let footerSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(10)
+                heightDimension: .estimated(36)
             )
             section.boundarySupplementaryItems = [
                 NSCollectionLayoutBoundarySupplementaryItem(

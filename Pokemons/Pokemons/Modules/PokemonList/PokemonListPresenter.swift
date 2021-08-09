@@ -42,71 +42,25 @@ extension PokemonPreview: Hashable {
     }
 }
 
-// MARK: - PokemonList
-
-enum PokemonList {
-    typealias Item = PokemonPreview
-    
-    enum SectionType: Hashable {
-        case favorite
-        case all(areMorePokemonsAvailable: Bool)
-        
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(self == .favorite ? 0 : 1)
-        }
-        
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            switch (lhs, rhs) {
-            case (.favorite, .favorite), (.all, .all):
-                return true
-            default:
-                return false
-            }
-        }
-        
-        var title: String {
-            switch self {
-            case .all:
-                return L10n.PokemonList.Section.all
-            case .favorite:
-                return L10n.PokemonList.Section.favorite
-            }
-        }
-    }
-
-    struct Section {        
-        let type: SectionType
-        let pokemonPreviews: [PokemonPreview]
-    }
-}
-
-protocol PokemonListRouter {
-    func showAcceptableError(description: String)
-    func showRetriableError(
-        description: String,
-        didChooseAccept: @escaping () -> Void,
-        didChooseRetry: @escaping () -> Void
-    )
-    
-    func showPokemonDetails(_ pokemon: Pokemon)
-}
+//MARK: - PokemonListPresenter
 
 protocol PokemonListPresenterType: PokemonCollectionViewCellDelegate {
-    var maxItemsInRowCount: Int { get }
+    var maxItemsInRow: Int { get }
     
     func viewDidLoad()
     func traitCollectionDidChange()
-    func didShowPaginationActivityIndicator()
+    
     func didPullToRefresh()
+    func didShowPaginationActivityIndicator()
     func didTapPokemon(with preview: PokemonPreview)
 }
 
 final class PokemonListPresenter {
-    var maxItemsInRowCount: Int {
+    var maxItemsInRow: Int {
         interfaceService.interfaceOrientation?.isPortrait ?? true ? 2 : 4
     }
     
-    private weak var view: PokemonListViewType!
+    private weak var view: PokemonList.View!
     
     typealias Context = HasPokemonService & CreatesInterfaceService
     private let pokemonService: PokemonServiceType
@@ -117,7 +71,7 @@ final class PokemonListPresenter {
     
     private var pokemonsToShowFromLastBatch: [PokemonPreview] = []
     
-    init(view: PokemonListViewType, context: Context, router: Router) {
+    init(view: PokemonList.View, context: Context, router: Router) {
         self.view = view
         self.pokemonService = context.pokemonService
         self.interfaceService = context.makeInterfaceService()
@@ -139,12 +93,12 @@ extension PokemonListPresenter: PokemonListPresenterType {
         actualizePokemonBatchLimit()
     }
     
-    func didShowPaginationActivityIndicator() {
-        loadNextPokemonsIfNotAlready()
-    }
-    
     func didPullToRefresh() {
         loadInitialData()
+    }
+    
+    func didShowPaginationActivityIndicator() {
+        loadNextPokemonsIfNotAlready()
     }
     
     func didTapPokemon(with preview: PokemonPreview) {
@@ -163,7 +117,7 @@ extension PokemonListPresenter {
         }
         updateData(
             favorites: self.pokemonService.favoritePokemons ?? [],
-            nonFavorites: self.pokemonService.nonFavoritePokemons,
+            nonFavorites: self.pokemonService.nonFavoritePokemons ?? [],
             isLoadFinished: self.pokemonService.areAllPokemonsDownloaded
         )
     }
@@ -180,14 +134,24 @@ private extension PokemonListPresenter {
         var resultFavorites: Result<[Pokemon], PokemonServiceError>?
         var resultNonFavorites: Result<[Pokemon], PokemonServiceError>?
         
-        pokemonService.loadFavoritePokemons { result in
-            resultFavorites = result
+        if let favorites = pokemonService.favoritePokemons {
+            resultFavorites = .success(favorites)
             dispatchGroup.leave()
+        } else {
+            pokemonService.loadFavoritePokemons { result in
+                resultFavorites = result
+                dispatchGroup.leave()
+            }
         }
         
-        pokemonService.loadNextPokemonBatchIfNotAlready { result in
-            resultNonFavorites = result
+        if let nonFavorites = pokemonService.nonFavoritePokemons {
+            resultNonFavorites = .success(nonFavorites)
             dispatchGroup.leave()
+        } else {
+            pokemonService.loadNextPokemonBatchIfNotAlready { result in
+                resultNonFavorites = result
+                dispatchGroup.leave()
+            }
         }
         
         dispatchGroup.notify(queue: .main) { [weak self] in
@@ -206,6 +170,7 @@ private extension PokemonListPresenter {
                         self.view?.setPullToRefreshEnabled(true)
                     },
                     didChooseRetry: {
+                        self.view?.setActivityIndicatorAnimating(true)
                         self.view?.setPullToRefreshEnabled(false)
                         self.loadInitialData()
                     }
@@ -216,7 +181,7 @@ private extension PokemonListPresenter {
             case (.success(let favorites), .success):
                 self.updateData(
                     favorites: favorites,
-                    nonFavorites: self.pokemonService.nonFavoritePokemons,
+                    nonFavorites: self.pokemonService.nonFavoritePokemons ?? [],
                     isLoadFinished: self.pokemonService.areAllPokemonsDownloaded
                 )
                 self.view?.setPullToRefreshEnabled(false)
@@ -231,20 +196,23 @@ private extension PokemonListPresenter {
     }
     
     func updateData(favorites: [Pokemon], nonFavorites: [Pokemon], isLoadFinished: Bool) {
+        pokemonsToShowFromLastBatch.removeAll()
         var sections: [PokemonList.Section] = []
+        
         if !favorites.isEmpty {
             sections.append(PokemonList.Section(
                 type: .favorite,
                 pokemonPreviews: favorites.map { PokemonPreview(pokemon: $0, isFavorite: true) }
             ))
         }
-        self.pokemonsToShowFromLastBatch.removeAll()
+        
         var nonFavoritePreviews = nonFavorites.map { PokemonPreview(pokemon: $0, isFavorite: false) }
         adjustForRowOptimalSize(items: &nonFavoritePreviews, overallCount: nonFavoritePreviews.count)
         sections.append(PokemonList.Section(
             type: .all(areMorePokemonsAvailable: !isLoadFinished),
             pokemonPreviews: nonFavoritePreviews
         ))
+        
         self.view?.updateData(sections)
     }
     
@@ -261,7 +229,7 @@ private extension PokemonListPresenter {
                 items.append(contentsOf: pokemons.map { PokemonPreview(pokemon: $0, isFavorite: false) })
                 self.adjustForRowOptimalSize(
                     items: &items,
-                    overallCount: self.pokemonService.nonFavoritePokemons.count
+                    overallCount: self.pokemonService.nonFavoritePokemons?.count ?? 0
                 )
                 self.view?.appendItems(
                     items: items,
@@ -275,7 +243,7 @@ private extension PokemonListPresenter {
     }
     
     func adjustForRowOptimalSize(items: inout [PokemonPreview], overallCount: Int) {
-        let countToShowLater = overallCount % maxItemsInRowCount
+        let countToShowLater = overallCount % maxItemsInRow
         if countToShowLater != 0 {
             for i in (1...countToShowLater).reversed() {
                 let index = items.index(items.endIndex, offsetBy: -i)
@@ -286,6 +254,6 @@ private extension PokemonListPresenter {
     }
     
     func actualizePokemonBatchLimit() {
-        pokemonService.pokemonBatchLimit = maxItemsInRowCount * 5
+        pokemonService.pokemonBatchLimit = maxItemsInRow * 5
     }
 }
