@@ -16,6 +16,7 @@ protocol PokemonCollectionViewCellDelegate: AnyObject {
 
 final class PokemonCollectionViewCell: UICollectionViewCell, Reusable {
     weak var delegate: PokemonCollectionViewCellDelegate?
+    var palette: PaletteType = DefaultPalette()
     
     typealias ViewModel = PokemonPreview
     private var viewModel: ViewModel?
@@ -42,6 +43,8 @@ final class PokemonCollectionViewCell: UICollectionViewCell, Reusable {
         label.textAlignment = .center
         label.contentMode = .bottom
         label.adjustsFontSizeToFitWidth = true
+        label.font = .preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
         
         return label
     }()
@@ -63,6 +66,11 @@ final class PokemonCollectionViewCell: UICollectionViewCell, Reusable {
         commonInit()
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        setBorderColor()
+    }
+    
     func configure(with viewModel: ViewModel) {
         self.viewModel = viewModel
         
@@ -78,7 +86,7 @@ private extension PokemonCollectionViewCell {
     func commonInit() {
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.black.cgColor
+        setBorderColor()
         
         contentView.addSubview(stackView)
         
@@ -95,6 +103,10 @@ private extension PokemonCollectionViewCell {
         stackView.heightToSuperview(multiplier: 0.9)
         stackView.widthToSuperview(multiplier: 0.85)
         stackView.centerInSuperview()
+    }
+    
+    func setBorderColor() {
+        layer.borderColor = palette.outlineColor.cgColor
     }
     
     @objc func didTapFavorite() {

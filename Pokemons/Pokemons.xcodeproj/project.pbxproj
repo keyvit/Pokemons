@@ -54,6 +54,7 @@
 		8FE7D6A726C07B7E00340395 /* UIImage+resized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7D6A626C07B7E00340395 /* UIImage+resized.swift */; };
 		8FE7D6A926C08DFF00340395 /* BasicPokemonInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7D6A826C08DFF00340395 /* BasicPokemonInfo.swift */; };
 		8FE7D6AC26C09B3E00340395 /* InterfaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7D6AB26C09B3E00340395 /* InterfaceService.swift */; };
+		8FE7D6AF26C0B4F300340395 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7D6AE26C0B4F300340395 /* Palette.swift */; };
 		8FF0518B26B1AA7700BD0CA7 /* FetchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF0518A26B1AA7700BD0CA7 /* FetchResult.swift */; };
 /* End PBXBuildFile section */
 
@@ -127,6 +128,7 @@
 		8FE7D6A626C07B7E00340395 /* UIImage+resized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+resized.swift"; sourceTree = "<group>"; };
 		8FE7D6A826C08DFF00340395 /* BasicPokemonInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicPokemonInfo.swift; sourceTree = "<group>"; };
 		8FE7D6AB26C09B3E00340395 /* InterfaceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceService.swift; sourceTree = "<group>"; };
+		8FE7D6AE26C0B4F300340395 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		8FF0518A26B1AA7700BD0CA7 /* FetchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchResult.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -277,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				8FE7D6AA26C09B2F00340395 /* InterfaceService */,
+				8FE7D6AD26C0B4E600340395 /* Palette */,
 				8FB843BE26B02B2E00991EE6 /* PokemonService */,
 				8F0FB3D126B2D8700081BF2B /* Storage */,
 			);
@@ -371,6 +374,14 @@
 				8FE7D6AB26C09B3E00340395 /* InterfaceService.swift */,
 			);
 			path = InterfaceService;
+			sourceTree = "<group>";
+		};
+		8FE7D6AD26C0B4E600340395 /* Palette */ = {
+			isa = PBXGroup;
+			children = (
+				8FE7D6AE26C0B4F300340395 /* Palette.swift */,
+			);
+			path = Palette;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -545,6 +556,7 @@
 				8FB843BB26B0263700991EE6 /* Assets.swift in Sources */,
 				8F7F906326B1741300478E6D /* AppConstants.swift in Sources */,
 				8F6E95F226B364C200C1864B /* PokemonDetailsCoordinator.swift in Sources */,
+				8FE7D6AF26C0B4F300340395 /* Palette.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -68,7 +68,7 @@ extension PokemonDetailsViewController: PokemonDetailsViewType {
 
 private extension PokemonDetailsViewController {
     func configureView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: consts.reusableCellID)
         tableView.dataSource = dataSource

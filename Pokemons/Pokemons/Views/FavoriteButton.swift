@@ -8,6 +8,8 @@
 import UIKit
 
 final class FavoriteButton: UIButton {
+    var palette: PaletteType = DefaultPalette()
+    
     enum Mode {
         case like
         case dislike
@@ -28,6 +30,11 @@ final class FavoriteButton: UIButton {
         super.layoutSubviews()
         
         layer.cornerRadius = bounds.height / 4
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        setBorderColor()
     }
     
     func setMode(_ mode: Mode) {
@@ -52,12 +59,16 @@ final class FavoriteButton: UIButton {
 private extension FavoriteButton {
     func commonInit() {
         layer.borderWidth = 1
-        layer.borderColor = UIColor.black.cgColor
+        setBorderColor()
         
         tintColor = .systemBlue
         contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         imageEdgeInsets.left = 4
         semanticContentAttribute = .forceRightToLeft
         setMode(.dislike)
+    }
+    
+    func setBorderColor() {
+        layer.borderColor = palette.outlineColor.cgColor
     }
 }

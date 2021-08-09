@@ -140,6 +140,11 @@ private extension KeyValueView {
         addSubview(stackView)
         stackView.edgesToSuperview()
         
+        for label in [keyLabel, valueLabel] {
+            label.adjustsFontForContentSizeCategory = true
+            label.font = .preferredFont(forTextStyle: .callout)
+        }
+        
         stackView.addArrangedSubview(keyLabel)
         stackView.addArrangedSubview(valueLabel)
         keyLabel.setContentHuggingPriority(.defaultLow - 1, for: .horizontal)
