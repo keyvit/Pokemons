@@ -21,11 +21,11 @@
       },
       {
         "package": "Reusable",
-        "repositoryURL": "https://github.com/AliSoftware/Reusable",
+        "repositoryURL": "https://github.com/keyvit/Reusable",
         "state": {
-          "branch": null,
-          "revision": "86cd17aa27e80d20bfe2ea57dd08958cf64664f4",
-          "version": "4.1.1"
+          "branch": "version-upgrade",
+          "revision": "d1b5ba8fdc20475b9fc448d9c5720abee0da5eb0",
+          "version": null
         }
       },
       {

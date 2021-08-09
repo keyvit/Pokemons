@@ -41,7 +41,6 @@
 		8FB843CD26B0309500991EE6 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843CC26B0309500991EE6 /* AppCoordinator.swift */; };
 		8FB843D226B0344300991EE6 /* PokemonDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843D126B0344300991EE6 /* PokemonDetailsViewController.swift */; };
 		8FB843D626B0354900991EE6 /* PokemonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843D526B0354900991EE6 /* PokemonCollectionViewCell.swift */; };
-		8FB843D926B0365300991EE6 /* Reusable in Frameworks */ = {isa = PBXBuildFile; productRef = 8FB843D826B0365300991EE6 /* Reusable */; };
 		8FB843DC26B0391600991EE6 /* TinyConstraints in Frameworks */ = {isa = PBXBuildFile; productRef = 8FB843DB26B0391600991EE6 /* TinyConstraints */; };
 		8FB843DE26B0393F00991EE6 /* PokemonListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843DD26B0393F00991EE6 /* PokemonListPresenter.swift */; };
 		8FB843E026B0740200991EE6 /* PokemonListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB843DF26B0740200991EE6 /* PokemonListCoordinator.swift */; };
@@ -55,6 +54,7 @@
 		8FE7D6A926C08DFF00340395 /* BasicPokemonInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7D6A826C08DFF00340395 /* BasicPokemonInfo.swift */; };
 		8FE7D6AC26C09B3E00340395 /* InterfaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7D6AB26C09B3E00340395 /* InterfaceService.swift */; };
 		8FE7D6AF26C0B4F300340395 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7D6AE26C0B4F300340395 /* Palette.swift */; };
+		8FE7D6B526C0BE6700340395 /* Reusable in Frameworks */ = {isa = PBXBuildFile; productRef = 8FE7D6B426C0BE6700340395 /* Reusable */; };
 		8FF0518B26B1AA7700BD0CA7 /* FetchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF0518A26B1AA7700BD0CA7 /* FetchResult.swift */; };
 /* End PBXBuildFile section */
 
@@ -146,9 +146,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8FB843E926B09E6500991EE6 /* Kingfisher in Frameworks */,
-				8FB843D926B0365300991EE6 /* Reusable in Frameworks */,
 				8FB843DC26B0391600991EE6 /* TinyConstraints in Frameworks */,
 				8F6EECE626B1638100F08CAB /* PokemonsAPI.framework in Frameworks */,
+				8FE7D6B526C0BE6700340395 /* Reusable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +341,7 @@
 				8FD009EE26AEB93F005BD1DD /* Pokemons */,
 				8F6EECE026B1638100F08CAB /* PokemonsAPI */,
 				8FD009ED26AEB93F005BD1DD /* Products */,
+				8FE7D6B026C0BC5A00340395 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -382,6 +383,13 @@
 				8FE7D6AE26C0B4F300340395 /* Palette.swift */,
 			);
 			path = Palette;
+			sourceTree = "<group>";
+		};
+		8FE7D6B026C0BC5A00340395 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -435,9 +443,9 @@
 			);
 			name = Pokemons;
 			packageProductDependencies = (
-				8FB843D826B0365300991EE6 /* Reusable */,
 				8FB843DB26B0391600991EE6 /* TinyConstraints */,
 				8FB843E826B09E6500991EE6 /* Kingfisher */,
+				8FE7D6B426C0BE6700340395 /* Reusable */,
 			);
 			productName = Pokemons;
 			productReference = 8FD009EC26AEB93F005BD1DD /* Pokemons.app */;
@@ -471,10 +479,10 @@
 			);
 			mainGroup = 8FD009E326AEB93F005BD1DD;
 			packageReferences = (
-				8FB843D726B0365300991EE6 /* XCRemoteSwiftPackageReference "Reusable" */,
 				8FB843DA26B0391600991EE6 /* XCRemoteSwiftPackageReference "TinyConstraints" */,
 				8FB843E726B09E6500991EE6 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				8F6EECEC26B163BD00F08CAB /* XCRemoteSwiftPackageReference "Alamofire" */,
+				8FE7D6B326C0BE6700340395 /* XCRemoteSwiftPackageReference "Reusable" */,
 			);
 			productRefGroup = 8FD009ED26AEB93F005BD1DD /* Products */;
 			projectDirPath = "";
@@ -850,14 +858,6 @@
 				minimumVersion = 5.4.3;
 			};
 		};
-		8FB843D726B0365300991EE6 /* XCRemoteSwiftPackageReference "Reusable" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AliSoftware/Reusable";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.1.1;
-			};
-		};
 		8FB843DA26B0391600991EE6 /* XCRemoteSwiftPackageReference "TinyConstraints" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/roberthein/TinyConstraints";
@@ -874,6 +874,14 @@
 				minimumVersion = 6.3.0;
 			};
 		};
+		8FE7D6B326C0BE6700340395 /* XCRemoteSwiftPackageReference "Reusable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/keyvit/Reusable";
+			requirement = {
+				branch = "version-upgrade";
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -881,11 +889,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8F6EECEC26B163BD00F08CAB /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
-		};
-		8FB843D826B0365300991EE6 /* Reusable */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8FB843D726B0365300991EE6 /* XCRemoteSwiftPackageReference "Reusable" */;
-			productName = Reusable;
 		};
 		8FB843DB26B0391600991EE6 /* TinyConstraints */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -896,6 +899,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8FB843E726B09E6500991EE6 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		8FE7D6B426C0BE6700340395 /* Reusable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FE7D6B326C0BE6700340395 /* XCRemoteSwiftPackageReference "Reusable" */;
+			productName = Reusable;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
